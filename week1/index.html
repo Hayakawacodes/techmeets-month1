@@ -65,6 +65,11 @@
       background: #357abd;
     }
 
+    .form button:disabled {
+      background: #b5cbe6;
+      cursor: not-allowed;
+    }
+
     .todo-list {
       margin: 0;
       padding: 0;
@@ -122,7 +127,7 @@
 
     <form class="form" id="todo-form">
       <input type="text" id="todo-input" placeholder="タスクを入力してください">
-      <button type="submit">追加</button>
+      <button type="submit" id="add-btn" disabled>追加</button>
     </form>
 
     <ul class="todo-list" id="todo-list"></ul>
@@ -136,6 +141,14 @@
     const form = document.getElementById("todo-form");
     const input = document.getElementById("todo-input");
     const list = document.getElementById("todo-list");
+    const addBtn = document.getElementById("add-btn");
+
+    // 入力が空（空白のみ含む）のときは追加ボタンを押せないようにする
+    function updateAddButton() {
+      addBtn.disabled = input.value.trim() === "";
+    }
+
+    input.addEventListener("input", updateAddButton);
 
     // 配列の内容をもとに画面を描き直す
     function render() {
@@ -188,6 +201,7 @@
     form.addEventListener("submit", (event) => {
       event.preventDefault(); // ページの再読み込みを防ぐ
 
+      // 空文字は追加しない（念のための二重チェック）
       const text = input.value.trim();
       if (text === "") {
         return;
@@ -195,6 +209,7 @@
 
       todos.push({ text: text, done: false });
       input.value = "";
+      updateAddButton();
       render();
     });
 
