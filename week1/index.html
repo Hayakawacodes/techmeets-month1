@@ -119,6 +119,13 @@
       text-align: center;
       color: #999;
     }
+
+    .counter {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
@@ -129,6 +136,8 @@
       <input type="text" id="todo-input" placeholder="タスクを入力してください">
       <button type="submit" id="add-btn" disabled>追加</button>
     </form>
+
+    <p class="counter" id="counter"></p>
 
     <ul class="todo-list" id="todo-list"></ul>
   </div>
@@ -142,6 +151,7 @@
     const input = document.getElementById("todo-input");
     const list = document.getElementById("todo-list");
     const addBtn = document.getElementById("add-btn");
+    const counter = document.getElementById("counter");
 
     // 入力が空（空白のみ含む）のときは追加ボタンを押せないようにする
     function updateAddButton() {
@@ -153,6 +163,10 @@
     // 配列の内容をもとに画面を描き直す
     function render() {
       list.innerHTML = "";
+
+      // 完了件数 / 総件数を表示する
+      const doneCount = todos.filter((todo) => todo.done).length;
+      counter.textContent = `${doneCount} / ${todos.length} 件完了`;
 
       if (todos.length === 0) {
         const empty = document.createElement("li");
