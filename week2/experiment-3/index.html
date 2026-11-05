@@ -51,6 +51,18 @@
       border-color: #4a90e2;
     }
 
+    .form input[type="date"] {
+      flex: 0 0 auto;
+      font-size: 14px;
+    }
+
+    .todo-due {
+      margin-left: 12px;
+      font-size: 13px;
+      color: #888;
+      white-space: nowrap;
+    }
+
     .form button {
       padding: 10px 16px;
       font-size: 16px;
@@ -180,6 +192,7 @@
 
     <form class="form" id="todo-form">
       <input type="text" id="todo-input" placeholder="タスクを入力してください">
+      <input type="date" id="due-input" aria-label="締め切り日">
       <button type="submit" id="add-btn" disabled>追加</button>
     </form>
 
@@ -222,11 +235,12 @@
     }
 
     // タスクを管理する配列
-    // 例: { text: "買い物", done: false }
+    // 例: { text: "買い物", done: false, due: "2026-11-10" }（due は未設定なら空文字）
     const todos = loadTodos();
 
     const form = document.getElementById("todo-form");
     const input = document.getElementById("todo-input");
+    const dueInput = document.getElementById("due-input");
     const list = document.getElementById("todo-list");
     const addBtn = document.getElementById("add-btn");
     const counter = document.getElementById("counter");
@@ -332,6 +346,15 @@
         });
 
         li.appendChild(span);
+
+        // 締め切り日（設定されている場合のみ表示。"2026-11-10" → "締切: 2026/11/10"）
+        if (todo.due) {
+          const due = document.createElement("span");
+          due.className = "todo-due";
+          due.textContent = `締切: ${todo.due.replace(/-/g, "/")}`;
+          li.appendChild(due);
+        }
+
         li.appendChild(deleteBtn);
         list.appendChild(li);
       });
@@ -347,8 +370,9 @@
         return;
       }
 
-      todos.push({ text: text, done: false });
+      todos.push({ text: text, done: false, due: dueInput.value });
       input.value = "";
+      dueInput.value = "";
       updateAddButton();
       render();
     });
