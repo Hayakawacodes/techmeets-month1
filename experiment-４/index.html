@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>好きなアニメまとめ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #f4f1fb;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #7b5cff, #ff6fa5);
+      color: #fff;
+      text-align: center;
+      padding: 40px 16px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* 検索・絞り込みエリア */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #search {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 14px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    #search:focus {
+      outline: none;
+      border-color: #7b5cff;
+    }
+
+    .genre-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .genre-buttons button {
+      padding: 8px 14px;
+      border: 2px solid #7b5cff;
+      background: #fff;
+      color: #7b5cff;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .genre-buttons button.active {
+      background: #7b5cff;
+      color: #fff;
+    }
+
+    #count {
+      margin-bottom: 16px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* カード一覧 */
+    .anime-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card-top {
+      font-size: 3rem;
+      text-align: center;
+      padding: 20px 0;
+      background: #efeaff;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .card-body h2 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ff6fa5;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+    }
+
+    .stars {
+      color: #ffb400;
+      letter-spacing: 2px;
+    }
+
+    .comment {
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .empty {
+      text-align: center;
+      color: #999;
+      padding: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #999;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📺 好きなアニメまとめ</h1>
+    <p>何度でも見返したい、お気に入りの作品たち</p>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="text" id="search" placeholder="タイトルで検索...">
+      <div class="genre-buttons" id="genreButtons"></div>
+    </div>
+
+    <p id="count"></p>
+    <div class="anime-list" id="animeList"></div>
+  </main>
+
+  <footer>
+    &copy; 好きなアニメまとめページ
+  </footer>
+
+  <script>
+    // アニメのデータ（自由に書き換え・追加してください）
+    const animeData = [
+      {
+        title: "鋼の錬金術師 FULLMETAL ALCHEMIST",
+        year: 2009,
+        genre: "アクション",
+        icon: "⚗️",
+        rating: 5,
+        comment: "伏線の回収が見事。兄弟の絆に何度も泣かされる。"
+      },
+      {
+        title: "STEINS;GATE",
+        year: 2011,
+        genre: "SF",
+        icon: "⏳",
+        rating: 5,
+        comment: "前半の日常が後半に効いてくる、タイムリープものの傑作。"
+      },
+      {
+        title: "けいおん！",
+        year: 2009,
+        genre: "日常",
+        icon: "🎸",
+        rating: 4,
+        comment: "ゆるい放課後の空気感が最高。見ていて元気が出る。"
+      },
+      {
+        title: "進撃の巨人",
+        year: 2013,
+        genre: "アクション",
+        icon: "🧱",
+        rating: 5,
+        comment: "毎話先が気になる展開。世界の謎が明かされていくのが面白い。"
+      },
+      {
+        title: "宇宙兄弟",
+        year: 2012,
+        genre: "SF",
+        icon: "🚀",
+        rating: 4,
+        comment: "夢を追いかける大人の物語。前向きな気持ちになれる。"
+      },
+      {
+        title: "ゆるキャン△",
+        year: 2018,
+        genre: "日常",
+        icon: "⛺",
+        rating: 4,
+        comment: "キャンプに行きたくなる癒し系アニメ。"
+      },
+      {
+        title: "四月は君の嘘",
+        year: 2014,
+        genre: "恋愛",
+        icon: "🎻",
+        rating: 5,
+        comment: "音楽の演出が美しい。ラストは涙なしでは見られない。"
+      }
+    ];
+
+    let currentGenre = "すべて";
+
+    const listEl = document.getElementById("animeList");
+    const searchEl = document.getElementById("search");
+    const genreButtonsEl = document.getElementById("genreButtons");
+    const countEl = document.getElementById("count");
+
+    // 評価の数字を星マークに変換する
+    function toStars(rating) {
+      return "★".repeat(rating) + "☆".repeat(5 - rating);
+    }
+
+    // ジャンルボタンを作る（データからジャンルを自動で集める）
+    function renderGenreButtons() {
+      const genres = ["すべて", ...new Set(animeData.map(a => a.genre))];
+
+      genreButtonsEl.innerHTML = "";
+      genres.forEach(genre => {
+        const btn = document.createElement("button");
+        btn.textContent = genre;
+        if (genre === currentGenre) btn.classList.add("active");
+
+        btn.addEventListener("click", () => {
+          currentGenre = genre;
+          renderGenreButtons();
+          renderList();
+        });
+
+        genreButtonsEl.appendChild(btn);
+      });
+    }
+
+    // カード一覧を表示する
+    function renderList() {
+      const keyword = searchEl.value.trim().toLowerCase();
+
+      const filtered = animeData.filter(anime => {
+        const matchGenre = currentGenre === "すべて" || anime.genre === currentGenre;
+        const matchKeyword = anime.title.toLowerCase().includes(keyword);
+        return matchGenre && matchKeyword;
+      });
+
+      countEl.textContent = `${filtered.length} 作品を表示中`;
+      listEl.innerHTML = "";
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<p class="empty">該当する作品がありません</p>';
+        return;
+      }
+
+      filtered.forEach(anime => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // textContent を使って安全に文字を入れる
+        const top = document.createElement("div");
+        top.className = "card-top";
+        top.textContent = anime.icon;
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+
+        const title = document.createElement("h2");
+        title.textContent = anime.title;
+
+        const meta = document.createElement("p");
+        meta.className = "meta";
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = anime.genre;
+        meta.appendChild(tag);
+        meta.appendChild(document.createTextNode(`${anime.year}年`));
+
+        const stars = document.createElement("div");
+        stars.className = "stars";
+        stars.textContent = toStars(anime.rating);
+
+        const comment = document.createElement("p");
+        comment.className = "comment";
+        comment.textContent = anime.comment;
+
+        body.append(title, meta, stars, comment);
+        card.append(top, body);
+        listEl.appendChild(card);
+      });
+    }
+
+    // 検索欄に入力するたびに一覧を更新
+    searchEl.addEventListener("input", renderList);
+
+    // 最初の表示
+    renderGenreButtons();
+    renderList();
+  </script>
+</body>
+</html>
