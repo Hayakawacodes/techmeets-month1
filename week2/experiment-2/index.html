@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロフィール</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    /* 画面全体：カードを上下左右の中央に置く */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f0f0;
+      font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      color: #333;
+    }
+
+    /* カード本体 */
+    .card {
+      width: 400px;
+      max-width: 100%; /* スマホなど画面が狭いときははみ出さない */
+      padding: 32px 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    /* アイコン画像（円形） */
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* 名前 */
+    .name {
+      margin: 16px 0 4px;
+      font-size: 24px;
+    }
+
+    /* 一言コメント */
+    .comment {
+      margin: 0 0 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* スキルバッジ：Flexboxで横並び */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;        /* 入りきらないときは折り返す */
+      justify-content: center;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .skills li {
+      padding: 4px 12px;
+      font-size: 13px;
+      color: #357abd;
+      background: #eaf2fc;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img class="avatar" src="https://placehold.jp/100x100.png" alt="アイコン画像">
+    <h1 class="name" id="name"></h1>
+    <p class="comment" id="comment"></p>
+    <ul class="skills" id="skills"></ul>
+  </div>
+
+  <script>
+    // プロフィールの内容（ここを書き換えると表示が変わる）
+    const profile = {
+      name: "山田 太郎",
+      comment: "毎日コツコツ、Webづくりを勉強中です！",
+      skills: ["HTML", "CSS", "JavaScript", "Git"],
+    };
+
+    // 名前と一言コメントを表示する
+    document.getElementById("name").textContent = profile.name;
+    document.getElementById("comment").textContent = profile.comment;
+
+    // スキルの数だけバッジ（li 要素）を作って並べる
+    const skillsList = document.getElementById("skills");
+    profile.skills.forEach((skill) => {
+      const li = document.createElement("li");
+      li.textContent = skill;
+      skillsList.appendChild(li);
+    });
+  </script>
+</body>
+</html>
