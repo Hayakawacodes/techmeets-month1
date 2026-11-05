@@ -125,6 +125,23 @@
       background: #ddd;
     }
 
+    /* ホバーエフェクト：影を濃くし、画像を少しズームする */
+    .anime-list .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .anime-list .card:hover {
+      box-shadow: 0 10px 24px rgba(123, 92, 255, 0.25);
+    }
+
+    .card-image {
+      transition: transform 0.3s;
+    }
+
+    .card:hover .card-image {
+      transform: scale(1.05);
+    }
+
     .card-top {
       font-size: 3rem;
       text-align: center;
