@@ -112,6 +112,21 @@
       color: #aaa;
     }
 
+    /* 締め切りを過ぎた未完了タスク */
+    .todo-item.overdue {
+      background: #fdecec;
+      box-shadow: inset 4px 0 0 #e25c5c, 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .todo-item.overdue .todo-text,
+    .todo-item.overdue .todo-due {
+      color: #d32f2f;
+    }
+
+    .todo-item.overdue .todo-due {
+      font-weight: bold;
+    }
+
     .delete-btn {
       margin-left: 12px;
       padding: 6px 12px;
@@ -284,6 +299,20 @@
 
     input.addEventListener("input", updateAddButton);
 
+    // 今日の日付を "YYYY-MM-DD" 形式で返す（ローカル時刻基準）
+    function getTodayString() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    // 締め切りを過ぎた未完了タスクかどうか（締め切り当日はまだ期限内とする）
+    function isOverdue(todo) {
+      return !todo.done && todo.due !== "" && todo.due !== undefined && todo.due < getTodayString();
+    }
+
     // 配列の内容をもとに画面を描き直す
     // 描き直すたびに保存もしておく（追加・完了・削除すべてに対応）
     function render() {
@@ -321,6 +350,9 @@
         li.className = "todo-item";
         if (todo.done) {
           li.classList.add("done");
+        }
+        if (isOverdue(todo)) {
+          li.classList.add("overdue");
         }
 
         // タスク名（クリックで完了／未完了を切り替え）
