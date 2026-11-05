@@ -88,9 +88,20 @@
 
     /* カード一覧 */
     .anime-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 20px;
+    }
+
+    /* Flexbox: 1枚あたり最小260px、余白は均等に広げる */
+    .anime-list .card {
+      flex: 1 1 260px;
+      max-width: 100%;
+    }
+
+    /* 該当なしメッセージは1行まるごと使って中央に表示 */
+    .anime-list .empty {
+      flex-basis: 100%;
     }
 
     .card {
