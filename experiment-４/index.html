@@ -116,6 +116,15 @@
       transform: translateY(-4px);
     }
 
+    /* カード画像（プレースホルダー） */
+    .card-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #ddd;
+    }
+
     .card-top {
       font-size: 3rem;
       text-align: center;
@@ -265,6 +274,17 @@
       return "★".repeat(rating) + "☆".repeat(5 - rating);
     }
 
+    // プレースホルダー画像（SVG）を作る。外部サービスを使わずにその場で生成する
+    function placeholderImage() {
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180">' +
+        '<rect width="100%" height="100%" fill="#d9d4e8"/>' +
+        '<text x="50%" y="50%" font-size="20" fill="#7a7391" ' +
+        'text-anchor="middle" dominant-baseline="middle">No Image</text>' +
+        '</svg>';
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
     // ジャンルボタンを作る（データからジャンルを自動で集める）
     function renderGenreButtons() {
       const genres = ["すべて", ...new Set(animeData.map(a => a.genre))];
@@ -307,6 +327,12 @@
         const card = document.createElement("div");
         card.className = "card";
 
+        // 画像（データに image があればそれを、なければプレースホルダーを表示）
+        const img = document.createElement("img");
+        img.className = "card-image";
+        img.src = anime.image || placeholderImage();
+        img.alt = anime.title;
+
         // textContent を使って安全に文字を入れる
         const top = document.createElement("div");
         top.className = "card-top";
@@ -335,7 +361,7 @@
         comment.textContent = anime.comment;
 
         body.append(title, meta, stars, comment);
-        card.append(top, body);
+        card.append(img, top, body);
         listEl.appendChild(card);
       });
     }
